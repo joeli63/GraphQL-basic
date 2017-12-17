@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs'
 import mongoose from 'mongoose'
 
-var Schema = mongoose.Schema;
-var saltRound = 10;
+var Schema = mongoose.Schema
+var saltRound = 10
 
 const User = new Schema({
     _id: {
