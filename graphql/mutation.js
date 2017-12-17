@@ -2,21 +2,15 @@ import UserModel from '../models/user'
 import UserType from './types/user'
 import {
     GraphQLString,
-    GraphQLList,
     GraphQLObjectType,
-    GraphQLSchema,
     GraphQLNonNull
 } from 'graphql'
 
 const promiseAddUser = (args) => {
-    var newUser = new UserModel(args)
+    return new UserModel(args).save((error, user) => {
+        if (error) return error
 
-    return new Promise((resolve, reject) => {
-        newUser.save((error) => {
-            if (error) reject(error)
-
-            else resolve(newUser)
-        })
+        return user
     })
 }
 
@@ -29,11 +23,11 @@ const MutationType = new GraphQLObjectType({
             args: {
                 username: {
                     name: 'Username',
-                    type: GraphQLString,
+                    type: new GraphQLNonNull(GraphQLString),
                 },
                 password: {
                     name: 'Password',
-                    type: GraphQLString,
+                    type: new GraphQLNonNull(GraphQLString),
                 }
             },
             resolve: (root, args) => {

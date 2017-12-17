@@ -1,0 +1,8 @@
+{
+    "presets": [
+        "es2017", 
+        "stage-3", 
+        "node8"
+    ],
+    "plugins": []
+}

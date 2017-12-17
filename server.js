@@ -10,9 +10,11 @@ import graphQL from 'express-graphql'
 import schema from './graphql/schema'
 
 dotenv.config()
-mongoose.connect(process.env.DB_URI, { useMongoClient: true })
-.then(() => console.log('Connect successful'))
-.catch(error => console.log(error))
+mongoose.connect(process.env.DB_URI, { useMongoClient: true }, (error, db) => {
+    if (error) console.log(error)
+
+    console.log('Connect successful')
+})
 
 const numCPUs = os.cpus().length
 const app = express()
@@ -35,13 +37,26 @@ if (cluster.isMaster) {
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use(bodyParser.json())
 
-    app.use('/graphql', graphQL({
-        schema
+    app.use('/graphql', graphQL((req, res) => {
+        return {
+            schema,
+            rootValue: res.status(404).send(`${res.statusCode}: Not Found`)
+        }
     }))
-    app.use('/graphiql', graphQL({
-        schema,
-        graphiql: true,
+    app.use('/graphiql', graphQL(() => {
+        const startTime = Date.now()
+        return {
+            schema,
+            graphiql: true,
+            extensions({ document, variables, operationName, result }) {
+                return { runTime: `${Date.now() - startTime}ms` }
+            }
+        }
     }))
+
+    app.use((req, res) => {
+        res.status(404).send(`${res.statusCode}: Not Found`)
+    })
 
     app.listen(process.env.PORT, () => console.log(`Server is running on port ${process.env.PORT}`))
 }

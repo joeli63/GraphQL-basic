@@ -4,28 +4,22 @@ import {
     GraphQLString,
     GraphQLList,
     GraphQLObjectType,
-    GraphQLSchema,
-    GraphQLNonNull,
-    GraphQLID
+    GraphQLNonNull
 } from 'graphql'
 
 const findUser = () => {
-    return new Promise((resolve, reject) => {
-        UserModel.find((error, users) => {
-            if (error) reject(error)
+    return UserModel.find((error, users) => {
+        if (error) return error
 
-            else resolve(users)
-        })
+        else return users
     })
 }
 
 const findUserById = (args) => {
-    return new Promise((resolve, reject) => {
-        UserModel.findById(args._id, (error, user) => {
-            if (error) reject(error)
+    return UserModel.findById(args._id, (error, user) => {
+        if (error) return error
 
-            else resolve(user)
-        })
+        else return user
     })
 }
 
@@ -48,7 +42,7 @@ const QueryType = new GraphQLObjectType({
                 args: {
                     _id: {
                         name: '_id',
-                        type: new GraphQLNonNull(GraphQLID)
+                        type: new GraphQLNonNull(GraphQLString)
                     }
                 },
                 resolve: (root, args) => {
