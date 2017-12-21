@@ -39,12 +39,12 @@ User.pre('save', function(next) {
     })
 })
 
-User.methods.comparePassword = (pw, cb) => {
-    bcrypt.compare(pw, this.password, (error, isMatch) => {
+User.methods.comparePassword = function(pw, cb) {
+    bcrypt.compare(pw, this.password, function(error, isMatch) {
         if (error) return cb(error)
 
         cb(null, isMatch)
     })
 }
 
-module.exports = mongoose.model('user', User)
+export default mongoose.model('user', User)
