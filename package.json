@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "nodemon dist/server.js",
-    "build": "babel src -d dist",
+    "build": "babel src -d dist && minify dist -d dist",
     "dev": "nodemon src/server.js --exec babel-node"
   },
   "keywords": [],
@@ -13,6 +13,7 @@
   "license": "ISC",
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-minify": "^0.2.0",
     "babel-preset-es2017": "^6.24.1",
     "babel-preset-node8": "^1.2.0",
     "babel-preset-stage-3": "^6.24.1",
