@@ -27,10 +27,18 @@ const numCPUs = os.cpus().length
 const app = express()
 
 /**
+ * Config morgan logger for graphQL.
+ */
+morgan.token('graphql', (req) => {
+    const {query, variables, operationName} = req.body
+    return `Operation Name: ${operationName} \nQuery: ${query} \nVariables: ${JSON.stringify(variables)}`
+});
+
+/**
  * Config server.
  */
 app.use([
-    morgan('dev'), 
+    morgan(':graphql'), 
     bodyParser.urlencoded({ extended: true }), 
     bodyParser.json(), 
     passport.initialize(), 
