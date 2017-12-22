@@ -90,7 +90,7 @@ if (cluster.isMaster) {
     })
 } else {
     app.use('/graphql', graphQL((req, res) => {
-        return graphQLCallBack(req, res, true, res.status(404).send(`${res.statusCode}: Not Found`))
+        return graphQLCallBack(req, res, false, res.status(404).send(`${res.statusCode}: Not Found`))
     }))
     app.use('/graphiql', graphQL((req, res) => {
         return graphQLCallBack(req, res, true)
