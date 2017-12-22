@@ -6,18 +6,20 @@ import {
     GraphQLNonNull
 } from 'graphql'
 
-const promiseAddUser = (args) => {
-    return new UserModel(args).save((error, user) => {
-        if (error) return error
+const signUp = (args) => {
+    return new Promise((resolve, reject) => {
+        new UserModel(args).save((error, user) => {
+            if (error) return reject(error)
 
-        return user
+            return resolve(user)
+        })
     })
 }
 
 const MutationType = new GraphQLObjectType({
     name: 'Mutation',
     fields: () => ({
-        addUser: {
+        signUp: {
             type: UserType,
             description: 'Add new a user.',
             args: {
@@ -31,7 +33,7 @@ const MutationType = new GraphQLObjectType({
                 }
             },
             resolve: (root, args) => {
-                return promiseAddUser(args)
+                return signUp(args)
             }
         }
     })

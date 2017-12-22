@@ -9,24 +9,7 @@ import {
 import passport from '../passport'
 import { encrypt, secret } from '../utils/crypto'
 import jwt from 'jsonwebtoken'
-
-const findUser = () => {
-    return UserModel.find((error, users) => {
-        if (error) return error
-
-        else return users
-    })
-}
-
-const findUserById = (args) => {
-    return new Promise((resolve, reject) => {
-        UserModel.findById(args._id, (error, user) => {
-            if (error) return reject(error)
-    
-            else return resolve(user)
-        })
-    })
-}
+import { unauthorizationHandler } from './utils'
 
 const login = (args) => {
     return new Promise((resolve, reject) => {
@@ -55,35 +38,31 @@ const login = (args) => {
     })
 }
 
+const viewProfile = (args) => {
+    return new Promise((resolve, reject) => {
+        UserModel.findById(args._id, (error, user) => {
+            if (error) return reject(error)
+    
+            else return resolve(user)
+        })
+    })
+}
+
+const viewAllProfile = () => {
+    return new Promise((resolve, reject) => {
+        UserModel.find((error, users) => {
+            if (error) return reject(error)
+
+            return resolve(users)
+        })
+    })
+}
+
 const QueryType = new GraphQLObjectType({
     name: 'Query',
     description: 'Root schema',
     fields: () => {
         return {
-            getUser: {
-                type: new GraphQLList(UserType),
-                description: 'List of all users.',
-                resolve: () => {
-                    return findUser()
-                }
-            },
-            getUserById: {
-                type: UserType,
-                description: 'Get user by id.',
-                args: {
-                    _id: {
-                        name: '_id',
-                        type: new GraphQLNonNull(GraphQLString)
-                    }
-                },
-                resolve: (root, args, context) => {
-                    console.log(context.user)
-                    
-                    if (!context.user) return new Promise((resolve, reject) => reject('Unauthorization.'))
-
-                    return findUserById(args)
-                }
-            },
             login: {
                 type: UserType,
                 description: 'Login query.',
@@ -99,6 +78,32 @@ const QueryType = new GraphQLObjectType({
                 },
                 resolve: (root, args, req) => {
                     return login(args)
+                }
+            },
+            viewProfile: {
+                type: UserType,
+                description: 'View profile by id query.',
+                args: {
+                    _id: {
+                        name: '_id',
+                        type: new GraphQLNonNull(GraphQLString)
+                    }
+                },
+                resolve: (root, args, context) => {
+                    console.log(context.user)
+                    
+                    if (!context.user) return unauthorizationHandler()
+
+                    return viewProfile(args)
+                }
+            },
+            viewAllProfile: {
+                type: new GraphQLList(UserType),
+                description: 'View all profile.',
+                resolve: (root, arg, context) => {
+                    if (!context.user) return unauthorizationHandler()
+
+                    return viewAllProfile()
                 }
             }
         }
