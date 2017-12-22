@@ -90,8 +90,6 @@ const QueryType = new GraphQLObjectType({
                     }
                 },
                 resolve: (root, args, context) => {
-                    console.log(context.user)
-                    
                     if (!context.user) return unauthorizationHandler()
 
                     return viewProfile(args)
