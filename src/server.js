@@ -9,6 +9,8 @@ import graphQL from 'express-graphql'
 import compression from 'compression'
 import helmet from 'helmet'
 
+import open from 'open'
+
 import schema from './graphql/schema'
 import passport from './passport'
 
@@ -100,5 +102,11 @@ if (cluster.isMaster) {
         res.status(404).send(`${res.statusCode}: Not Found`)
     })
 
-    app.listen(process.env.PORT, () => console.log(`Server is running on port ${process.env.PORT}`))
+    app.listen(process.env.PORT, process.env.HOST, (req, res) => {
+        console.log(`Server is running on port ${process.env.PORT}`)
+
+        if (process.env.NODE_ENV !== 'production') {
+            open(`http://${process.env.HOST}:${process.env.PORT}/graphiql`)
+        }
+    })
 }
