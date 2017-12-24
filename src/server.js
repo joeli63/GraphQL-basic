@@ -1,6 +1,6 @@
 import cluster from 'cluster'
 import os from 'os'
-import morgan from 'morgan'
+import morgan, { token } from 'morgan'
 import dotenv from 'dotenv'
 import bodyParser from 'body-parser'
 import express from 'express'
@@ -8,8 +8,8 @@ import mongoose from 'mongoose'
 import graphQL from 'express-graphql'
 import compression from 'compression'
 import helmet from 'helmet'
-
 import open from 'open'
+import timeout from 'connect-timeout'
 
 import schema from './graphql/schema'
 import passport from './passport'
@@ -33,22 +33,24 @@ const app = express()
  */
 morgan.token('graphql', (req) => {
     const {query, variables, operationName} = req.body
-    return '\nGraphQL: -------------------------------------------------------------------------------------------\n' + 
-            `Operation Name: ${operationName} \nQuery: ${query} \nVariables: ${JSON.stringify(variables)}\n` + 
-            '----------------------------------------------------------------------------------------------------'
+
+    return `Operation Name: ${operationName} \nQuery: ${query} \nVariables: ${JSON.stringify(variables)}`
 });
 
 /**
  * Config server.
  */
 app.use([
-    morgan(':graphql'), 
+    morgan(':method :url :status :res[content-length] - :response-time ms :graphql'), 
     bodyParser.urlencoded({ extended: true }), 
     bodyParser.json(), 
     passport.initialize(), 
     passport.session(), 
     compression({ level: 9 }), 
-    helmet()
+    helmet(), 
+    timeout('30s', (req, res, next) => {
+        if (!req.timedout) next()
+    })
 ])
 
 const graphQLCallBack = (req, res, graphiql, rootValue) => {
