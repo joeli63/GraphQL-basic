@@ -33,7 +33,9 @@ const app = express()
  */
 morgan.token('graphql', (req) => {
     const {query, variables, operationName} = req.body
-    return `Operation Name: ${operationName} \nQuery: ${query} \nVariables: ${JSON.stringify(variables)}`
+    return '\nGraphQL: -------------------------------------------------------------------------------------------\n' + 
+            `Operation Name: ${operationName} \nQuery: ${query} \nVariables: ${JSON.stringify(variables)}\n` + 
+            '----------------------------------------------------------------------------------------------------'
 });
 
 /**
@@ -45,7 +47,7 @@ app.use([
     bodyParser.json(), 
     passport.initialize(), 
     passport.session(), 
-    compression(), 
+    compression({ level: 9 }), 
     helmet()
 ])
 
@@ -105,8 +107,8 @@ if (cluster.isMaster) {
     app.listen(process.env.PORT, process.env.HOST, (req, res) => {
         console.log(`Server is running on port ${process.env.PORT}`)
 
-        if (process.env.NODE_ENV !== 'production') {
-            open(`http://${process.env.HOST}:${process.env.PORT}/graphiql`)
-        }
+        // if (process.env.NODE_ENV !== 'production') {
+        //     open(`http://${process.env.HOST}:${process.env.PORT}/graphiql`)
+        // }
     })
 }
