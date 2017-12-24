@@ -107,8 +107,8 @@ if (cluster.isMaster) {
     app.listen(process.env.PORT, process.env.HOST, (req, res) => {
         console.log(`Server is running on port ${process.env.PORT}`)
 
-        // if (process.env.NODE_ENV !== 'production') {
-        //     open(`http://${process.env.HOST}:${process.env.PORT}/graphiql`)
-        // }
+        if (process.env.NODE_ENV !== 'production') {
+            open(`http://${process.env.HOST}:${process.env.PORT}/graphiql`)
+        }
     })
 }
