@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
+  "private": true,
   "scripts": {
-    "start": "node dist/server.js",
-    "build": "babel src -d dist && npm run minify",
+    "start:server": "node dist/server.js",
+    "build:server": "babel server -d dist && npm run minify",
     "minify": "minify dist -d dist",
-    "dev": "nodemon src/server.js --exec babel-node",
-    "deploy": "export NODE_ENV=production && pm2 delete all && pm2 start dist/server.js -n graphql-express -i 4"
+    "dev": "nodemon server/server.js --exec babel-node",
+    "deploy": "export NODE_ENV=production && pm2 delete all && pm2 start dist/server.js -n graphql-express -i 4",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "eject": "react-scripts eject"
   },
   "keywords": [],
   "author": "",
@@ -40,6 +44,9 @@
     "open": "^0.0.5",
     "passport": "0.3.2",
     "passport-jwt": "2.1.0",
-    "uuid": "^3.1.0"
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-scripts": "^1.0.17"
   }
 }

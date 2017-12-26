@@ -10,6 +10,7 @@ import compression from 'compression'
 import helmet from 'helmet'
 import open from 'open'
 import timeout from 'connect-timeout'
+import path from 'path'
 
 import schema from './graphql/schema'
 import passport from './passport'
@@ -50,7 +51,8 @@ app.use([
     helmet(), 
     timeout('30s', (req, res, next) => {
         if (!req.timedout) next()
-    })
+    }),
+    express.static(path.resolve(__dirname, '../build'))
 ])
 
 const graphQLCallBack = (req, res, graphiql, rootValue) => {
@@ -109,8 +111,8 @@ if (cluster.isMaster) {
     app.listen(process.env.PORT, process.env.HOST, (req, res) => {
         console.log(`Server is running on port ${process.env.PORT}`)
 
-        if (process.env.NODE_ENV !== 'production') {
-            open(`http://${process.env.HOST}:${process.env.PORT}/graphiql`)
-        }
+        // if (process.env.NODE_ENV !== 'production') {
+        //     open(`http://${process.env.HOST}:${process.env.PORT}/graphiql`)
+        // }
     })
 }
